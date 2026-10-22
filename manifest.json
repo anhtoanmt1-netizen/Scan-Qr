@@ -1,15 +1,20 @@
 {
-  "name": "SPX Scan – Order Pool",
-  "short_name": "SPX Scan",
+  "id": "./",
+  "name": "SPX Express – Order Pool",
+  "short_name": "SPX Express",
   "description": "Quét mã SPX, tự điền Hub/Sort code và xuất file Excel",
-  "start_url": "./",
+  "lang": "vi",
+  "start_url": "./?source=pwa",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait",
   "background_color": "#EE4E2C",
   "theme_color": "#EE4E2C",
+  "categories": ["business", "productivity", "utilities"],
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
