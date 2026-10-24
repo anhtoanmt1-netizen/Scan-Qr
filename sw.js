@@ -1,5 +1,6 @@
-const V = 'spx-scan-v6';
-const SHELL = ['./', 'index.html', 'manifest.json', 'data.json', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
+const V = 'spx-scan-v7';
+const SHELL = ['./', 'index.html', 'manifest.json', 'data.json', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'games.js',
+  ...['R','N','B','Q','K','P'].flatMap(k => ['w' + k, 'b' + k]).map(n => 'pieces/' + n + '.png')];
 const EXTRA = [
   'https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',

@@ -278,6 +278,19 @@ body.typing .fab{opacity:0;pointer-events:none;transform:scale(.8)}
 .cred a{color:var(--brand);font-weight:700;text-decoration:none;word-break:break-all}
 .cred a:active{opacity:.6}
 
+/* Cài đặt */
+.sg{margin-top:12px}.sg.f1{margin-top:2px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:5px;background:var(--input);padding:4px;border-radius:12px;border:1.5px solid var(--line)}
+.seg button{height:38px;border-radius:9px;background:transparent;color:var(--muted);font-weight:700;font-size:12.5px;transition:.2s}
+.seg button.on{background:var(--brand);color:#fff;box-shadow:0 3px 10px rgba(238,78,44,.35)}
+.sr{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:42px;border-bottom:1px solid var(--line);font-size:12.5px;font-weight:600;cursor:pointer}
+.sr:last-child{border-bottom:0}
+input[type=range]{height:32px;padding:0;border:0;background:none;box-shadow:none;accent-color:var(--brand)}
+.fab.right{left:auto;right:14px;padding:0 15px 0 18px}
+body.gamemode .bar,body.gamemode .fab,body.gamemode #btnUp{display:none!important}
+body.gamemode{padding-bottom:36px}
+[hidden]{display:none!important}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
@@ -292,10 +305,12 @@ body.typing .fab{opacity:0;pointer-events:none;transform:scale(.8)}
     <button class="ib" id="btnShareApp" title="Chia sẻ app" aria-label="Chia sẻ app"><svg viewBox="0 0 24 24"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M16 6l-4-4-4 4M12 2v13"/></svg></button>
     <button class="ib" id="btnUp" title="Cập nhật DATA" aria-label="Cập nhật DATA"><svg viewBox="0 0 24 24"><path d="M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></button>
     <button class="ib" id="btnTheme" title="Sáng/Tối" aria-label="Đổi giao diện"><svg viewBox="0 0 24 24" id="themeIco"></svg></button>
+    <button class="ib" id="btnSet" title="Cài đặt" aria-label="Cài đặt"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg></button>
   </div>
 </header>
 
 <main>
+  <div id="sortApp">
   <div class="ios" id="iosTip">Cài app: bấm nút <b>Chia sẻ</b> ⬆ của Safari rồi chọn <b>Thêm vào Màn hình chính</b>.<button id="iosClose" aria-label="Đóng">✕</button></div>
 
   <div class="pad">
@@ -341,6 +356,8 @@ body.typing .fab{opacity:0;pointer-events:none;transform:scale(.8)}
       <div class="hbody"><div class="hbi"><div id="hist"><div class="hempty">Chưa có file nào</div></div></div></div>
     </div>
   </div>
+  </div>
+  <div id="gameRoot" hidden></div>
 </main>
 
 <div class="bar"><div>
@@ -428,6 +445,28 @@ body.typing .fab{opacity:0;pointer-events:none;transform:scale(.8)}
   </div>
 </div>
 
+<!-- Cài đặt -->
+<div class="ov" id="stOv">
+  <div class="modal">
+    <h3><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>Cài đặt</h3>
+    <div class="sg f1"><label class="l"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>Ngôn ngữ</label>
+      <div class="seg" id="segLang"><button type="button" data-v="vi">Tiếng Việt</button><button type="button" data-v="en">English</button></div></div>
+    <div class="sg"><label class="l"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="16" r="2.2"/></svg>Vị trí nút Quét mã</label>
+      <div class="seg" id="segFab"><button type="button" data-v="left">Bên trái</button><button type="button" data-v="right">Bên phải</button></div></div>
+    <div class="sg"><label class="l"><svg viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4zM15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/></svg>Âm thanh khi nhập thành công</label>
+      <label class="sr"><span>1. Mặc định</span><span class="sw"><input type="checkbox" class="snd" value="1"><span></span></span></label>
+      <label class="sr"><span>2. Chuông ngân (dịu nhẹ)</span><span class="sw"><input type="checkbox" class="snd" value="2"><span></span></span></label>
+      <label class="sr"><span>3. Xu vàng (vui tai)</span><span class="sw"><input type="checkbox" class="snd" value="3"><span></span></span></label>
+      <label class="sr"><span>4. Tắt âm</span><span class="sw"><input type="checkbox" class="snd" value="4"><span></span></span></label></div>
+    <div class="sg"><label class="l"><svg viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4zM15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/></svg>Âm lượng <b id="volTxt" style="color:var(--brand)">80%</b></label>
+      <input type="range" id="vol" min="0" max="100" step="5" aria-label="Âm lượng"></div>
+    <div class="sg"><label class="l"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>Giao diện</label>
+      <label class="sr"><span>Giao diện đổi Sort code (mặc định)</span><span class="sw"><input type="checkbox" class="mdo" value="sort"><span></span></span></label>
+      <label class="sr"><span>Giao diện trò chơi</span><span class="sw"><input type="checkbox" class="mdo" value="game"><span></span></span></label></div>
+    <button class="btn b3" id="stClose" type="button">Đóng</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
@@ -446,25 +485,196 @@ const store = {
   del(k){ try{ localStorage.removeItem(k); }catch(e){} }
 };
 
+/* ---------- Cài đặt · đa ngôn ngữ ---------- */
+const $$ = q => [...document.querySelectorAll(q)];
+const S = Object.assign({ lang:'vi', fab:'left', sound:1, vol:80, mode:'sort' }, store.get('spx_settings', {}));
+const saveS = () => store.set('spx_settings', S);
+const EN = {
+"Cài app: bấm nút": "Install: tap",
+"Chia sẻ": "Share",
+"⬆ của Safari rồi chọn": "⬆ in Safari, then choose",
+"Thêm vào Màn hình chính": "Add to Home Screen",
+"Tỉnh": "Province",
+"Quét liên tục": "Continuous scan",
+"Tắt": "Off",
+"Bật": "On",
+"Ward chung cho các mã quét": "Shared Ward for scanned codes",
+"Chọn theo Hub": "Pick by Hub",
+"Đã nhập:": "Entered:",
+"Vuốt sang trái": "Swipe left",
+"để thêm hàng": "to add a row",
+"Lịch sử tải": "Download history",
+"Chưa có file nào": "No files yet",
+"Thêm hàng": "Add row",
+"Xong & xuất Excel": "Done & export Excel",
+"Quét mã": "Scan",
+"Quét mã SPX": "Scan SPX code",
+"Đèn": "Torch",
+"Chạm vào khung hình để lấy nét lại · giữ mã trong khung": "Tap the view to refocus · keep the code in the frame",
+"Đóng camera": "Close camera",
+"Cập nhật DATA": "Update DATA",
+"Mật khẩu": "Password",
+"Cập nhật từ link": "Update from link",
+"hoặc": "or",
+"Cập nhật từ file": "Update from file",
+"Cột: A Tỉnh · B Ward · C Deli station · D Sort code. Sheet cần chia sẻ “Bất kỳ ai có đường liên kết” (Người xem).": "Columns: A Province · B Ward · C Deli station · D Sort code. The sheet must be shared as “Anyone with the link” (Viewer).",
+"Khôi phục DATA gốc": "Restore original DATA",
+"Đóng": "Close",
+"Người tạo:": "Created by:",
+"Đã xuất file": "File exported",
+"Chia sẻ file": "Share file",
+"Tải file về máy": "Save file to device",
+"Xóa danh sách & làm mới": "Clear list & start over",
+"Reset toàn bộ bảng?": "Reset the whole table?",
+"Xóa hết & nhập mới": "Delete all & start new",
+"Hủy": "Cancel",
+"Chọn Hub → Ward": "Pick Hub → Ward",
+"Thu gọn tất cả": "Collapse all",
+"· chạm để chọn": "· tap to choose",
+"Liên tục · Ward:": "Continuous · Ward:",
+"· Đã quét:": "· Scanned:",
+"Trình duyệt không hỗ trợ lưu lịch sử": "This browser cannot store history",
+"Cài app": "Install app",
+"Chia sẻ app": "Share app",
+"Sáng/Tối": "Light/Dark",
+"Đổi giao diện": "Toggle theme",
+"Gõ tên phường/xã (không cần dấu)": "Type ward name (accents optional)",
+"Xóa Ward": "Clear Ward",
+"Hàng trước": "Previous row",
+"Hàng sau": "Next row",
+"Nhập mật khẩu": "Enter password",
+"Chọn Hub và Ward": "Choose Hub and Ward",
+"Lọc nhanh Hub hoặc Ward (không cần dấu)": "Filter Hub or Ward (accents optional)",
+"Xóa hàng": "Delete row",
+"Nhập hoặc quét mã": "Type or scan code",
+"Chạm để chọn Hub → Ward": "Tap to pick Hub → Ward",
+"Chọn Hub Name": "Choose Hub Name",
+"Tải lại": "Download again",
+"Đã cài app": "App installed",
+"Công cụ quét mã SPX": "SPX scanning tool",
+"Đã sao chép link app": "App link copied",
+"Sao chép link:": "Copy link:",
+"Không tải được DATA": "Could not load DATA",
+"⚠ Mã bị trùng": "⚠ Duplicate code",
+"✓ Hợp lệ": "✓ Valid",
+"Nhập hoặc quét mã SPX trước để điền các ô bên dưới": "Enter or scan the SPX code first to fill the fields below",
+"Nhập SPX Tracking Number trước": "Enter the SPX Tracking Number first",
+"Hàng trống đã có sẵn": "An empty row already exists",
+"Ward chưa khớp, hãy chọn từ gợi ý": "Ward not matched, pick from suggestions",
+"Không tìm thấy Hub hoặc Ward phù hợp": "No matching Hub or Ward",
+"Chưa có dữ liệu cho tỉnh này": "No data for this province",
+"Quét xong sẽ tự quay về màn hình nhập": "After scanning you return to the entry screen automatically",
+"Máy không bật được đèn": "Cannot turn on the torch",
+"Hãy chọn Ward cho chế độ Quét liên tục": "Choose a Ward for Continuous scan",
+"Xong quét": "Done scanning",
+"Chưa tải được thư viện quét (cần mạng lần đầu)": "Scanner library not loaded (internet needed the first time)",
+"hãy cấp quyền camera": "please allow camera access",
+"Sai mật khẩu": "Wrong password",
+"Không có dòng hợp lệ (cần cột A Tỉnh, B Ward, C Deli station, D Sort code)": "No valid rows (need columns A Province, B Ward, C Deli station, D Sort code)",
+"Link không đúng dạng Google Sheet": "Not a valid Google Sheet link",
+"Không đọc được Google Sheet. Hãy chia sẻ ở chế độ “Bất kỳ ai có đường liên kết” (Người xem) rồi thử lại": "Could not read the Google Sheet. Share it as “Anyone with the link” (Viewer) and try again",
+"Đã khôi phục DATA gốc": "Original DATA restored",
+"Chưa nhập link Google Sheet": "No Google Sheet link entered",
+"Đang tải dữ liệu…": "Loading data…",
+"Chưa chọn file": "No file chosen",
+"Thiết bị chưa hỗ trợ chia sẻ file, đã tải file về máy": "Sharing files is not supported, the file was downloaded instead",
+"Không mở được chia sẻ, đã tải file về máy": "Could not open sharing, the file was downloaded instead",
+"Chưa có mã SPX nào": "No SPX codes yet",
+"Đã làm mới": "Cleared",
+"Bảng đang trống": "The table is empty",
+"Đã reset, nhập mới từ đầu": "Reset done, start fresh",
+"Đang dùng DATA gốc đi kèm app": "Using the built-in DATA",
+"Cài đặt": "Settings",
+"Ngôn ngữ": "Language",
+"Vị trí nút Quét mã": "Scan button position",
+"Bên trái": "Left",
+"Bên phải": "Right",
+"Âm thanh khi nhập thành công": "Success sound",
+"1. Mặc định": "1. Default",
+"2. Chuông ngân (dịu nhẹ)": "2. Soft bell",
+"3. Xu vàng (vui tai)": "3. Gold coin (playful)",
+"4. Tắt âm": "4. Mute",
+"Âm lượng": "Volume",
+"Giao diện": "Interface",
+"Giao diện đổi Sort code (mặc định)": "Sort code interface (default)",
+"Giao diện trò chơi": "Game interface",
+"Đã chuyển sang giao diện trò chơi": "Switched to game interface",
+"Đã chuyển về giao diện Sort code": "Switched to Sort code interface"
+};
+const EN_RE = [
+  [/^Hàng (\d+)$/, (m, a, b, c) => 'Row ' + a],
+  [/^Mã SPX bị trùng: (.+)$/, (m, a, b, c) => 'Duplicate SPX code: ' + a],
+  [/^Đã chọn: (.+)$/, (m, a, b, c) => 'Selected: ' + a],
+  [/^Không mở được camera: (.+)$/, (m, a, b, c) => 'Cannot open camera: ' + tr(a)],
+  [/^TRÙNG: (.+)$/, (m, a, b, c) => 'DUPLICATE: ' + a],
+  [/^Trùng: (.+)$/, (m, a, b, c) => 'Duplicate: ' + a],
+  [/^Đã quét: (.+)$/, (m, a, b, c) => 'Scanned: ' + a],
+  [/^Đã quét (\d+) mã$/, (m, a, b, c) => 'Scanned ' + a + ' codes'],
+  [/^Đang dùng: (.+) · (\d+) dòng · cập nhật (.+)$/, (m, a, b, c) => 'In use: ' + a + ' · ' + b + ' rows · updated ' + c],
+  [/^Đã cập nhật (\d+) dòng \((.+)\)$/, (m, a, b, c) => 'Updated ' + a + ' rows (' + b + ')'],
+  [/^Lỗi file: (.+)$/, (m, a, b, c) => 'File error: ' + a],
+  [/^Còn (\d+) mã trùng, hãy xóa trước khi xuất$/, (m, a, b, c) => a + ' duplicate codes left, remove them before exporting'],
+  [/^(\d+) hàng chưa có Hub\/Sort code\. Vẫn xuất\?$/, (m, a, b, c) => a + ' rows have no Hub/Sort code. Export anyway?'],
+  [/^(\d+) đơn · (.+)$/, (m, a, b, c) => a + ' orders · ' + b],
+  [/^· (\d+) đơn$/, (m, a, b, c) => '· ' + a + ' orders'],
+  [/^(\d+) hàng đã nhập sẽ bị xóa hoàn toàn và không thể khôi phục\. Lịch sử file đã xuất vẫn được giữ\. Bạn chắc chắn muốn bắt đầu lại\?$/, (m, a, b, c) => a + ' entered rows will be deleted and cannot be recovered. Export history is kept. Are you sure you want to start over?']
+];
+function tr(str){
+  if(S.lang !== 'en') return str;
+  const raw = String(str), core = raw.trim(); if(!core) return raw;
+  let out = EN[core];
+  if(out === undefined) for(const [re, fn] of EN_RE){ const m = core.match(re); if(m){ out = fn(...m); break; } }
+  return out === undefined ? raw : raw.match(/^\s*/)[0] + out + raw.match(/\s*$/)[0];
+}
+const trRec = new WeakMap();
+function trText(n){
+  const v = n.data, rec = trRec.get(n);
+  if(rec && v === rec.set){ const want = S.lang === 'en' ? tr(rec.vi) : rec.vi; if(want !== v){ n.data = want; rec.set = want; } return; }
+  const out = S.lang === 'en' ? tr(v) : v; trRec.set(n, { vi: v, set: out }); if(out !== v) n.data = out;
+}
+function trAttr(el, a){
+  if(!el.hasAttribute(a)) return;
+  const cur = el.getAttribute(a), box = el.__tr || (el.__tr = {}), rec = box[a];
+  if(rec && cur === rec.set){ const want = S.lang === 'en' ? tr(rec.vi) : rec.vi; if(want !== cur){ el.setAttribute(a, want); rec.set = want; } return; }
+  const out = S.lang === 'en' ? tr(cur) : cur; box[a] = { vi: cur, set: out }; if(out !== cur) el.setAttribute(a, out);
+}
+function trTree(n){
+  if(n.nodeType === 3){ trText(n); return; }
+  if(n.nodeType !== 1 || /^(SCRIPT|STYLE|TEXTAREA)$/.test(n.tagName)) return;
+  ['placeholder', 'aria-label', 'title'].forEach(a => trAttr(n, a));
+  n.childNodes.forEach(trTree);
+}
+new MutationObserver(ms => { for(const m of ms){ if(m.type === 'characterData') trText(m.target); else m.addedNodes.forEach(trTree); } })
+  .observe(document.body, { childList:true, subtree:true, characterData:true });
+const _cf = window.confirm.bind(window); window.confirm = m => _cf(tr(m));
+const _pr = window.prompt.bind(window); window.prompt = (m, d) => _pr(tr(m), d);
+function applyLang(){ document.documentElement.lang = S.lang; trTree(document.body); tick(); }
+window.SPX = { store, S, tr, toast: (...a) => toast(...a), beep: (...a) => beep(...a), extend(d, r){ Object.assign(EN, d); (r || []).forEach(x => EN_RE.push(x)); } };
+
 /* ---------- Âm thanh ---------- */
 let actx;
 function unlockAudio(){ try{ actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if(actx.state === 'suspended') actx.resume(); }catch(e){} }
 addEventListener('pointerdown', unlockAudio);
-function beep(ok){
+function tone(freq, t, d, type, peak){
+  const o = actx.createOscillator(), g = actx.createGain(), v = Math.max(.0003, peak * (S.vol / 100));
+  o.type = type; o.frequency.value = freq;
+  g.gain.setValueAtTime(.0001, actx.currentTime + t);
+  g.gain.exponentialRampToValueAtTime(v, actx.currentTime + t + .015);
+  g.gain.exponentialRampToValueAtTime(.0001, actx.currentTime + t + d);
+  o.connect(g); g.connect(actx.destination); o.start(actx.currentTime + t); o.stop(actx.currentTime + t + d + .03);
+}
+function beep(ok, preview){                   // preview = số 1..3 để nghe thử âm thanh trong Cài đặt
+  const snd = preview || S.sound;
+  if(!preview && navigator.vibrate) navigator.vibrate(ok ? 60 : [120,60,120]);
+  if(!preview && snd === 4) return;            // tắt âm
+  if(S.vol <= 0) return;
   try{
     unlockAudio();
-    const seq = ok ? [[880,0,.12],[1175,.13,.14]] : [[220,0,.22],[180,.26,.28]];
-    seq.forEach(([f,t,d]) => {
-      const o = actx.createOscillator(), g = actx.createGain();
-      o.type = ok ? 'sine' : 'square'; o.frequency.value = f;
-      g.gain.setValueAtTime(.0001, actx.currentTime + t);
-      g.gain.exponentialRampToValueAtTime(.35, actx.currentTime + t + .02);
-      g.gain.exponentialRampToValueAtTime(.0001, actx.currentTime + t + d);
-      o.connect(g); g.connect(actx.destination);
-      o.start(actx.currentTime + t); o.stop(actx.currentTime + t + d + .02);
-    });
+    if(!ok){ tone(220, 0, .22, 'square', .3); tone(180, .26, .28, 'square', .3); return; }
+    if(snd === 2){ tone(1319, 0, .9, 'sine', .38); tone(2637, 0, .5, 'sine', .12); tone(3951, 0, .3, 'sine', .06); }
+    else if(snd === 3){ tone(988, 0, .08, 'square', .16); tone(1319, .08, .3, 'square', .16); }
+    else { tone(880, 0, .12, 'sine', .35); tone(1175, .13, .14, 'sine', .35); }
   }catch(e){}
-  if(navigator.vibrate) navigator.vibrate(ok ? 60 : [120,60,120]);
 }
 
 /* ---------- Toast ---------- */
@@ -477,7 +687,7 @@ function toast(msg, type='info'){
 /* ---------- Đồng hồ + giao diện ---------- */
 const pad = n => String(n).padStart(2,'0');
 function tick(){
-  const d = new Date(), w = ['CN','T2','T3','T4','T5','T6','T7'][d.getDay()];
+  const d = new Date(), w = (S.lang === 'en' ? ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'] : ['CN','T2','T3','T4','T5','T6','T7'])[d.getDay()];
   $('#clock').textContent = `${w}, ${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} · ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
 setInterval(tick, 1000); tick();
@@ -506,7 +716,7 @@ $('#iosClose').onclick = () => { $('#iosTip').classList.remove('show'); store.se
 $('#btnShareApp').onclick = async () => {
   const url = location.href.split('#')[0].split('?')[0];
   try{
-    if(navigator.share) await navigator.share({ title:'SPX Express – Order Pool', text:'Công cụ quét mã SPX', url });
+    if(navigator.share) await navigator.share({ title:'SPX Express – Order Pool', text: tr('Công cụ quét mã SPX'), url });
     else if(navigator.clipboard){ await navigator.clipboard.writeText(url); toast('Đã sao chép link app', 'ok'); }
     else prompt('Sao chép link:', url);
   }catch(e){ /* người dùng hủy */ }
@@ -1181,10 +1391,47 @@ $('#btnReset').onclick = () => {
 $('#rsNo').onclick = () => $('#rsOv').classList.remove('show');
 $('#rsYes').onclick = () => { resetAll(); $('#rsOv').classList.remove('show'); beep(true); toast('Đã reset, nhập mới từ đầu', 'ok'); };
 
+/* ---------- Cài đặt: giao diện, nút nổi, âm thanh ---------- */
+const stOv = $('#stOv');
+function applyFab(){ $('#fab').classList.toggle('right', S.fab === 'right'); }
+function whenGames(cb){ if(window.SPXGames) cb(); else addEventListener('load', cb, { once:true }); }
+function applyMode(){
+  const g = S.mode === 'game';
+  document.body.classList.toggle('gamemode', g);
+  $('#sortApp').hidden = g; $('#gameRoot').hidden = !g;
+  if(g) whenGames(() => { SPXGames.mount($('#gameRoot')); SPXGames.setActive(true); });
+  else if(window.SPXGames) SPXGames.setActive(false);
+}
+function syncSet(){
+  $$('#segLang button').forEach(b => b.classList.toggle('on', b.dataset.v === S.lang));
+  $$('#segFab button').forEach(b => b.classList.toggle('on', b.dataset.v === S.fab));
+  $$('.snd').forEach(i => i.checked = +i.value === S.sound);
+  $$('.mdo').forEach(i => i.checked = i.value === S.mode);
+  $('#vol').value = S.vol; $('#volTxt').textContent = S.vol + '%';
+}
+$('#btnSet').onclick = () => { syncSet(); stOv.classList.add('show'); };
+$('#stClose').onclick = () => stOv.classList.remove('show');
+stOv.addEventListener('click', e => { if(e.target === stOv) stOv.classList.remove('show'); });
+$$('#segLang button').forEach(b => b.onclick = () => { S.lang = b.dataset.v; saveS(); applyLang(); syncSet(); });
+$$('#segFab button').forEach(b => b.onclick = () => { S.fab = b.dataset.v; saveS(); applyFab(); syncSet(); });
+$$('.snd').forEach(i => i.onchange = () => {
+  if(!i.checked){ syncSet(); return; }                 // luôn có đúng 1 lựa chọn
+  S.sound = +i.value; saveS(); syncSet(); if(S.sound !== 4) beep(true, S.sound);
+});
+$('#vol').oninput = e => { S.vol = +e.target.value; $('#volTxt').textContent = S.vol + '%'; saveS(); };
+$('#vol').onchange = () => beep(true, S.sound === 4 ? 1 : S.sound);
+$$('.mdo').forEach(i => i.onchange = () => {
+  if(!i.checked){ syncSet(); return; }
+  if(S.mode === i.value){ syncSet(); return; }
+  S.mode = i.value; saveS(); applyMode(); syncSet(); stOv.classList.remove('show');
+  toast(S.mode === 'game' ? 'Đã chuyển sang giao diện trò chơi' : 'Đã chuyển về giao diện Sort code', 'ok');
+});
+
 /* ---------- Khởi động ---------- */
-loadData().then(() => { rows.forEach(resolve); resolve(batch); renderAll(); syncCont(); renderHistory(); });
+loadData().then(() => { rows.forEach(resolve); resolve(batch); renderAll(); syncCont(); renderHistory(); applyFab(); applyLang(); applyMode(); syncSet(); });
 if('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 })();
 </script>
+<script src="games.js"></script>
 </body>
 </html>
