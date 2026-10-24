@@ -1,7 +1,7 @@
 {
   "id": "./",
   "name": "SPX Express – Order Pool",
-  "short_name": "SPX Express",
+  "short_name": "CSC SPX",
   "description": "Quét mã SPX, tự điền Hub/Sort code và xuất file Excel",
   "lang": "vi",
   "start_url": "./?source=pwa",
