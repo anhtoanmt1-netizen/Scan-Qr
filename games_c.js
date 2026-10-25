@@ -155,7 +155,7 @@ const Brick = (() => {
     b.hp--; X.tone(300 + (b.max - b.hp) * 120 + rnd(60), 0, .04, 'square', .1);
     if(b.hp <= 0){
       score += 10 * level; boom(b); bricks.splice(bricks.indexOf(b), 1);
-      if(Math.random() < .22){ const r = Math.random(); drops.push({ x: b.x + b.w / 2, y: b.y, t: r < .5 ? '+1' : r < .85 ? 'x2' : 'x3' }); }
+      if(Math.random() < .36){ const r = Math.random(); drops.push({ x: b.x + b.w / 2, y: b.y, t: r < .5 ? '+1' : r < .85 ? 'x2' : 'x3' }); }
     }else score += 3 * level;
     info();
   }
