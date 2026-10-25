@@ -17,7 +17,9 @@ const IC = {
   flip:'<svg viewBox="0 0 24 24"><path d="M7 4v14M3 14l4 4 4-4M17 20V6M13 10l4-4 4 4"/></svg>',
   new:'<svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 109-9 9 9 0 00-6.7 3M3 4v5h5"/></svg>',
   flag:'<svg viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>',
-  dig:'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/></svg>'
+  dig:'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/></svg>',
+  pause:'<svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg>',
+  back:'<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>'
 };
 const TAB_IC = {
   sudoku:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>',
@@ -44,6 +46,8 @@ X.extend({
   [/^Gợi ý: (.+)$/, (m, a) => 'Hint: ' + a],
   [/^Kỷ lục: (.+)$/, (m, a) => 'Best: ' + a]
 ]);
+
+X.extend({ 'Trò chơi':'Games','Chọn trò chơi':'Choose a game' });
 
 /* ---------- CSS ---------- */
 const CSS = `
@@ -237,8 +241,8 @@ const Sdk = (() => {
     root.innerHTML = `
       <div class="gbar"><div class="chips" id="sdLv">${Object.entries(LV).map(([k, v]) => `<button class="chip" data-d="${k}">${v[1]}</button>`).join('')}</div>
         <div class="gstat"><span>Lỗi <b id="sdM">0/3</b></span><b id="sdT">00:00</b></div></div>
-      <div class="gcard">
-        <div class="sdw"><div class="sdk" id="sdg" style="transition:opacity .2s"></div><div class="gov" id="sdOv" hidden></div></div>
+      <div class="gcols"><div class="gL"><div class="gcard"><div class="sdw"><div class="sdk" id="sdg" style="transition:opacity .2s"></div><div class="gov" id="sdOv" hidden></div></div></div></div>
+      <div class="gR"><div class="gcard">
         <div class="np" id="sdN"></div>
         <div class="gbtns c4">
           <button class="gb" id="sdUndo">${IC.undo}<span>Hoàn tác</span></button>
@@ -246,9 +250,8 @@ const Sdk = (() => {
           <button class="gb" id="sdNote">${IC.note}<span id="sdNoteT">Ghi chú</span></button>
           <button class="gb" id="sdHint">${IC.hint}<span>Gợi ý</span></button>
         </div>
-        <div class="gtip" id="sdBest"></div>
-      </div>
-      <button class="btn b2" id="sdNew" style="margin-top:9px;width:100%">${IC.new}Ván mới</button>`;
+        <div class="gtip" id="sdBest"></div></div>
+      <button class="btn b2" id="sdNew" style="margin-top:9px;width:100%">${IC.new}Ván mới</button></div></div>`;
     const g = $('#sdg', root);
     for(let i = 0; i < 81; i++){ const b = document.createElement('button'); b.type = 'button'; b.onclick = () => { S.sel = S.sel === i ? -1 : i; upd(); }; g.appendChild(b); cells.push(b); }
     const np = $('#sdN', root);
@@ -333,13 +336,12 @@ const Mine = (() => {
     root.innerHTML = `
       <div class="gbar"><div class="chips" id="mnLv">${Object.entries(LV).map(([k, v]) => `<button class="chip" data-d="${k}">${v[3]}</button>`).join('')}</div>
         <div class="gstat"><span>💣 <b id="mnLeft">0</b></span><b id="mnT">00:00</b></div></div>
-      <div class="gcard">
+      <div class="gcols"><div class="gL"><div class="gcard"><div class="bw" style="position:relative"><div class="mb" id="mnG"></div><div class="gov" id="mnOv" hidden></div></div></div></div>
+      <div class="gR"><div class="gcard">
         <div class="gbar" style="margin-bottom:9px"><button class="face" id="mnFace" aria-label="Ván mới">🙂</button>
           <button class="gb" id="mnMode" style="flex:1;flex-direction:row;gap:7px;min-height:40px;font-size:12px">${IC.flag}<span id="mnModeT">Cắm cờ</span></button></div>
-        <div style="position:relative"><div class="mb" id="mnG"></div><div class="gov" id="mnOv" hidden></div></div>
-        <div class="gtip">Chạm giữ một ô để cắm cờ · chạm vào số để mở nhanh</div><div class="gtip" id="mnBest"></div>
-      </div>
-      <button class="btn b2" id="mnNew" style="margin-top:9px;width:100%">${IC.new}Ván mới</button>`;
+        <div class="gtip">Chạm giữ một ô để cắm cờ · chạm vào số để mở nhanh</div><div class="gtip" id="mnBest"></div></div>
+      <button class="btn b2" id="mnNew" style="margin-top:9px;width:100%">${IC.new}Ván mới</button></div></div>`;
     const g = $('#mnG', root);
     g.addEventListener('pointerdown', e => { const c = e.target.closest('.mc'); if(!c) return; fired = false; clearTimeout(lp); const i = +c.dataset.i; lp = setTimeout(() => { fired = true; if(!G.over){ if(G.rev[i]) return; flag(i); render(); } }, 420); });
     g.addEventListener('pointerup', e => { clearTimeout(lp); const c = e.target.closest('.mc'); if(c && !fired) tap(+c.dataset.i); });
@@ -479,7 +481,17 @@ const Chess = (() => {
 
   /* --- Giao diện --- */
   let root, G, SAVE = 'spx_chess';
-  const img = p => `<img src="pieces/${p}.png" alt="${p}" draggable="false">`;
+  const PSH = {
+  base: '<rect x="10" y="33.500" width="25" height="5" rx="2.500"/>',
+  P: '<circle cx="22.500" cy="13.500" r="5.500"/><path d="M15 33.500c.5-7.500 3-12 7.500-13 4.500 1 7 5.500 7.500 13z"/>',
+  R: '<path d="M12 9.500h5.500v3.500h3.500V9.500h3v3.500h3.500V9.500H33V18l-3.500 3.500v12h-14v-12L12 18z"/><path d="M15.500 21.500h14" fill="none"/>',
+  N: '<path d="M13.500 33.500c-.5-7 1-11.500 6-15-2.500.3-4.800 1.800-7 4L9.500 19l9-10c2.500-2.600 5.500-3.600 8.500-2.800C33 7.800 36.500 14 36 21.500v12z"/><path d="M27 9c3 3 5 7 5 12" fill="none"/><circle cx="24" cy="14.500" r="1.500" fill="#073763" stroke="none"/>',
+  B: '<path d="M22.500 6c-2.200 0-3.800 1.600-3.800 3.400 0 1 .5 1.900 1.300 2.500C16 14.800 13.500 19 13.500 24c0 4 1.800 7 4 9.500h10c2.200-2.500 4-5.500 4-9.500 0-5-2.500-9.200-6.500-12.100.8-.6 1.300-1.500 1.300-2.500C26.300 7.600 24.700 6 22.500 6z"/><path d="M22.500 13.500V20M19.500 16.800h6" fill="none"/>',
+  Q: '<path d="M9 15l4.500 18.500h18L36 15l-5 6-1.750-11-3.750 9.500-3-11-3 11-3.750-9.500L14 21z"/><circle cx="9" cy="13" r="2.200"/><circle cx="15.750" cy="8.500" r="2.200"/><circle cx="22.500" cy="6.500" r="2.200"/><circle cx="29.250" cy="8.500" r="2.200"/><circle cx="36" cy="13" r="2.200"/>',
+  K: '<path d="M20.500 4.500h4v3h3v4h-3V15h-4v-3.500h-3v-4h3z"/><path d="M12.500 33.500c-2-8.500.5-13.500 6-16h8c5.500 2.500 8 7.500 6 16z"/><path d="M17 26h11" fill="none"/>'
+};
+const pieceSVG = p => `<svg viewBox="0 0 45 45" class="pc"><g fill="${p[0] === 'w' ? '#ffffff' : '#EE4E2C'}" stroke="#073763" stroke-width="1.800" stroke-linejoin="round" stroke-linecap="round">${PSH[p[1]]}${PSH.base}</g></svg>`;
+  const img = pieceSVG;
   function newGame(keep){
     const o = keep || {};
     G = { s: initial(), hist: [], mode: o.mode || 'ai', human: o.human || 'w', level: o.level || 'med', flip: false, sel: -1, moves: [], last: null, hint: null, over: null, think: false, keys: [] };
@@ -580,15 +592,16 @@ const Chess = (() => {
   }
   function build(){
     root.innerHTML = `
-      <div class="gcard">
+      <div class="gcols"><div class="gL">
+        <div class="cstat" id="chSt"></div>
+        <div class="cap" id="chCapT"></div>
+        <div class="cbw"><div class="cb" id="chB"></div><div class="pro" id="chPro" hidden><span>Phong cấp</span><div></div></div></div>
+        <div class="cap" id="chCapB"></div></div>
+      <div class="gR"><div class="gcard">
         <div class="opt"><div class="lbl">Chế độ</div><div class="chips"><button class="chip" data-m="ai">Chơi với máy</button><button class="chip" data-m="pvp">2 người</button></div></div>
         <div class="opt" id="chSide"><div class="lbl">Quân của bạn</div><div class="chips"><button class="chip" data-h="w">Trắng</button><button class="chip" data-h="b">Đen</button></div></div>
         <div class="opt" id="chLvl"><div class="lbl">Cấp độ</div><div class="chips"><button class="chip" data-l="easy">Dễ</button><button class="chip" data-l="med">Vừa</button><button class="chip" data-l="hard">Khó</button></div></div>
       </div>
-      <div class="cstat" id="chSt"></div>
-      <div class="cap" id="chCapT"></div>
-      <div class="cbw"><div class="cb" id="chB"></div><div class="pro" id="chPro" hidden><span>Phong cấp</span><div></div></div></div>
-      <div class="cap" id="chCapB"></div>
       <div class="gbtns c4">
         <button class="gb" id="chNew">${IC.new}<span>Ván mới</span></button>
         <button class="gb" id="chUndo">${IC.undo}<span>Hoàn tác</span></button>
@@ -596,7 +609,7 @@ const Chess = (() => {
         <button class="gb" id="chFlip">${IC.flip}<span>Lật bàn</span></button>
       </div>
       <div class="mvs gcard" id="chMv" style="margin-top:9px"></div>
-      <div class="gtip">Chạm quân cờ rồi chạm ô đích để đi</div>`;
+      <div class="gtip">Chạm quân cờ rồi chạm ô đích để đi</div></div></div>`;
     $('#chB', root).addEventListener('click', e => { const c = e.target.closest('.cs'); if(c) click(+c.dataset.s); });
     $$('[data-m]', root).forEach(b => b.onclick = () => { newGame({ mode: b.dataset.m, human: G.human, level: G.level }); persist(); });
     $$('[data-h]', root).forEach(b => b.onclick = () => { newGame({ mode: G.mode, human: b.dataset.h, level: G.level }); persist(); });
@@ -608,23 +621,143 @@ const Chess = (() => {
   return { mount(el){ root = el; build(); restore(); }, _t:{ initial, fromFEN, legal, apply, perft: function p(s, d){ if(!d) return 1; let n = 0; for(const m of legal(s)) n += p(apply(s, m), d - 1); return n; }, sudoku: () => Sdk } };
 })();
 
-/* ======================== KHUNG CHUNG ======================== */
-let mounted = false, active = false, tab = st.get('spx_gtab', 'sudoku');
-function setTab(t){
-  tab = t; st.set('spx_gtab', t);
-  $$('.gtabs button').forEach(b => b.classList.toggle('on', b.dataset.g === t));
-  $$('.gpane').forEach(p => p.classList.toggle('on', p.id === 'g-' + t));
+/* ======================== KHUNG CHUNG: màn hình chọn game ======================== */
+const CSS2 = `
+.ghead{font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:2px 3px 9px}
+.glaunch{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.gt{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:12px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;font-weight:700;font-size:11.5px;color:var(--text);transition:.2s;animation:up2 .3s ease both}
+.gt:active{transform:scale(.93)}
+.gt .ic{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;color:#fff;box-shadow:0 5px 12px rgba(7,55,99,.25)}
+.gt .ic svg{width:28px;height:28px}
+.gt:nth-child(3n+1) .ic{background:linear-gradient(135deg,var(--brand),#ff7a4d)}
+.gt:nth-child(3n+2) .ic{background:linear-gradient(135deg,var(--navy),#2a6cb0)}
+.gt:nth-child(3n) .ic{background:linear-gradient(135deg,#ff7a4d,#1c5a9a)}
+.gtop{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.gback{height:38px;padding:0 13px 0 7px;border-radius:12px;background:var(--card);border:1px solid var(--line);color:var(--navy);font-weight:700;font-size:12px;display:flex;align-items:center;gap:3px;box-shadow:var(--shadow)}
+[data-theme="dark"] .gback{color:#fff}
+.gback:active{transform:scale(.95)}
+.gtitle{flex:1;font-weight:800;font-size:16px}
+.gcols{display:block}.gL,.gR{min-width:0}.gR{margin-top:9px}
+.sbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px 12px;min-width:62px;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center}
+.sbox span{font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.sbox b{font-size:15px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums}
+.bw{position:relative;margin:0 auto;max-width:var(--bs,420px)}
+.cv{width:100%;height:auto;display:block;border-radius:12px;touch-action:none;background:#0d2a47;user-select:none;-webkit-user-select:none}
+.cvw .gov{border-radius:12px}
+.sdw,.mb,.cbw{max-width:var(--bs,420px)}
+.cstat.warn{color:var(--err)}
+/* 2048 */
+.tb{position:relative;aspect-ratio:1;background:#bcd0e6;border-radius:12px;touch-action:none;overflow:hidden;user-select:none;-webkit-user-select:none}
+[data-theme="dark"] .tb{background:#14375d}
+.tg4{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr)}
+.tg4 i{margin:4px;border-radius:10px;background:rgba(255,255,255,.45)}
+[data-theme="dark"] .tg4 i{background:rgba(255,255,255,.08)}
+.tile{position:absolute;left:0;top:0;width:25%;height:25%;padding:4px;transition:transform .12s ease;font-size:clamp(20px,7.500vw,34px)}
+.tile span{display:grid;place-items:center;width:100%;height:100%;border-radius:10px;font-weight:800;font-size:1em}
+.tile.nw span{animation:tpop .2s ease}.tile.mg span{animation:tmg .18s ease}
+@keyframes tpop{from{transform:scale(.2);opacity:0}to{transform:none;opacity:1}}
+@keyframes tmg{50%{transform:scale(1.18)}}
+.t2 span{background:#f1f6fb;color:#073763}.t4 span{background:#dbe8f6;color:#073763}.t8 span{background:#bcd6ef;color:#073763}
+.t16 span{background:#8fb8e3;color:#fff}.t32 span{background:#5f98d2;color:#fff}.t64 span{background:#2f72b4;color:#fff}
+.t128 span{background:#1c5a9a;color:#fff}.t256 span{background:#073763;color:#fff}.t512 span{background:#ff9a76;color:#fff}
+.t1024 span{background:#ff7a4d;color:#fff}.t2048 span{background:#EE4E2C;color:#fff;box-shadow:0 0 14px rgba(238,78,44,.6)}.tbig span{background:#c93a1c;color:#fff}
+/* Cờ ca rô */
+.crb{display:grid;grid-template-columns:repeat(15,1fr);grid-template-rows:repeat(15,1fr);aspect-ratio:1;background:#eaf1f8;border-radius:10px;overflow:hidden;--ln:#b5c9de;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+[data-theme="dark"] .crb{background:#0c2744;--ln:#27507d}
+.cc{position:relative;display:grid;place-items:center;min-width:0;min-height:0;background:linear-gradient(var(--ln),var(--ln)) center/100% 1px no-repeat,linear-gradient(var(--ln),var(--ln)) center/1px 100% no-repeat}
+.cc.lst{background-color:rgba(238,78,44,.2)}
+.cc.win{background-color:rgba(255,209,102,.6);animation:cwin .7s ease-in-out infinite alternate}
+.mk{width:80%;height:80%;fill:none;stroke-width:3.200;stroke-linecap:round;animation:mkin .18s ease}
+.mk.mx{stroke:var(--navy)}.mk.mo{stroke:var(--brand)}
+[data-theme="dark"] .mk.mx{stroke:#8ab4e0}
+.mk-x{color:var(--navy);font-weight:800}.mk-o{color:var(--brand);font-weight:800}
+[data-theme="dark"] .mk-x{color:#8ab4e0}
+@keyframes mkin{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+@keyframes cwin{from{filter:brightness(1)}to{filter:brightness(1.2)}}
+/* Cờ vua (thiết kế lại) */
+.cs.l{background:#e8f0f8}.cs.d{background:#86a9cc}
+[data-theme="dark"] .cs.l{background:#c9d9ea}[data-theme="dark"] .cs.d{background:#5d86b3}
+.cs svg.pc{width:90%;height:90%;pointer-events:none;filter:drop-shadow(0 2px 1.500px rgba(7,55,99,.38))}
+.cs.l .rk,.cs.l .fl{color:#4a79a8}.cs.d .rk,.cs.d .fl{color:#eaf3fb}
+.cs.lm{background:#f9e784!important}.cs.sl{background:#ffd9c9!important;box-shadow:inset 0 0 0 3px #EE4E2C}
+.cb{box-shadow:var(--shadow)}
+.cap svg{width:20px;height:20px;margin-right:-6px}
+.pro button{background:#e8f0f8}.pro svg{width:100%;height:100%}
+/* Cờ tướng */
+.xqb{width:100%;height:auto;display:block;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.xb{fill:#e8f0f8;stroke:#073763;stroke-width:3}
+.xl{fill:none;stroke:#073763;stroke-width:1.600;stroke-linecap:round}
+[data-theme="dark"] .xb{fill:#16365a;stroke:#5d86b3}[data-theme="dark"] .xl{stroke:#8fb0d4}
+.xr{font-size:19px;font-weight:700;fill:#073763;opacity:.5;text-anchor:middle;font-family:"Montserrat","Noto Serif CJK SC","Noto Serif SC","Songti SC","SimSun","PingFang SC","Microsoft YaHei",serif}
+[data-theme="dark"] .xr{fill:#cfe1f3}
+.xp{filter:drop-shadow(0 2px 2px rgba(7,55,99,.32))}
+.xp .d1{fill:#fff;stroke:#073763;stroke-width:1.600}
+.xp.rd .d2{fill:none;stroke:#EE4E2C;stroke-width:1.600}.xp.rd .gl{fill:#EE4E2C}
+.xp.bk .d2{fill:none;stroke:#073763;stroke-width:1.600}.xp.bk .gl{fill:#073763}
+.xp .gl{font-size:20px;font-weight:800;text-anchor:middle;font-family:"Montserrat","Noto Serif CJK SC","Noto Serif SC","Songti SC","SimSun","PingFang SC","Microsoft YaHei",serif}
+.xp.sel .d1{fill:#fff3b0;stroke:#EE4E2C;stroke-width:2.800}
+.xmv{fill:rgba(238,78,44,.7)}.xcp{fill:none;stroke:rgba(238,78,44,.85);stroke-width:3.500}
+.xlm{fill:rgba(246,238,123,.55);stroke:#e6d84a;stroke-width:1.500}
+.xck{fill:rgba(232,53,46,.35);stroke:#e8352e;stroke-width:2}
+.xht{fill:none;stroke:#2ea8e6;stroke-width:3;stroke-dasharray:5 3}
+/* Xoay ngang */
+@media (orientation:landscape) and (max-height:540px){
+  :root{--bs:max(190px,calc(100vh - 150px))}
+  .gm{max-width:900px}
+  .gtop{margin-bottom:5px}.gback{height:32px}.gtitle{font-size:14px}.gbar{margin-bottom:5px}.gcard{padding:8px}
+  .gcols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}
+  .gR{margin-top:0}
+  .glaunch{grid-template-columns:repeat(5,1fr)}
+  .gt .ic{width:44px;height:44px}
+  .sdw,.mb,.cbw,.bw{margin-left:0}
+}`;
+const ORDER = ['sudoku', 'mine', 'chess', 'xiangqi', 'caro', 'g2048', 'snake', 'brick', 'bird'];
+const REG = {}, pane = {};
+let mounted = false, active = false, cur = null, rootEl;
+const isOn = id => active && !document.hidden && cur === id;
+function register(def){ REG[def.id] = def; if(mounted) buildLaunch(); }
+function buildLaunch(){
+  const l = $('#glaunch', rootEl);
+  l.innerHTML = ORDER.filter(id => REG[id]).map((id, i) => `<button class="gt" data-g="${id}" style="animation-delay:${i * 35}ms"><span class="ic">${REG[id].icon}</span><span>${REG[id].name}</span></button>`).join('');
+  $$('.gt', l).forEach(b => b.onclick = () => open(b.dataset.g));
+}
+function open(id){
+  const d = REG[id]; if(!d) return;
+  cur = id; $('#glw', rootEl).hidden = true; $('#gview', rootEl).hidden = false; $('.gtitle', rootEl).textContent = d.name;
+  $$('.gpane', rootEl).forEach(p => p.classList.remove('on'));
+  let p = pane[id];
+  if(!p){ p = pane[id] = document.createElement('div'); p.className = 'gpane'; $('#gbody', rootEl).appendChild(p); d.mount(p); }
+  p.classList.add('on'); if(d.show) d.show(); window.scrollTo(0, 0);
+}
+function back(){
+  const d = REG[cur]; if(d && d.hide) d.hide();
+  cur = null; $('#gview', rootEl).hidden = true; $('#glw', rootEl).hidden = false;
 }
 function mount(root){
-  if(mounted) return; mounted = true;
-  const style = document.createElement('style'); style.textContent = CSS; document.head.appendChild(style);
-  root.innerHTML = `<div class="gm">
-    <div class="gtabs">${[['sudoku', 'Sudoku'], ['mine', 'Dò mìn'], ['chess', 'Cờ vua']].map(([k, n]) => `<button data-g="${k}">${TAB_IC[k]}<span>${n}</span></button>`).join('')}</div>
-    <div class="gpane" id="g-sudoku"></div><div class="gpane" id="g-mine"></div><div class="gpane" id="g-chess"></div></div>`;
-  Sdk.mount($('#g-sudoku', root)); Mine.mount($('#g-mine', root)); Chess.mount($('#g-chess', root));
-  $$('.gtabs button', root).forEach(b => b.onclick = () => setTab(b.dataset.g));
-  setTab(tab);
-  setInterval(() => { if(!active || document.hidden) return; if(tab === 'sudoku') Sdk.tick(); else if(tab === 'mine') Mine.tick(); }, 1000);
+  if(mounted) return; mounted = true; rootEl = root;
+  const style = document.createElement('style'); style.textContent = CSS + CSS2; document.head.appendChild(style);
+  root.innerHTML = `<div class="gm"><div id="glw"><div class="ghead">Chọn trò chơi</div><div class="glaunch" id="glaunch"></div></div>
+    <div id="gview" hidden><div class="gtop"><button class="gback" id="gback" type="button">${IC.back}<span>Trò chơi</span></button><div class="gtitle"></div></div><div id="gbody"></div></div></div>`;
+  $('#gback', root).onclick = back; buildLaunch();
+  setInterval(() => { if(!active || document.hidden) return; if(cur === 'sudoku') Sdk.tick(); else if(cur === 'mine') Mine.tick(); }, 1000);
 }
-window.SPXGames = { mount, setActive(v){ active = v; }, _chess: Chess._t };
+const fit = (cv, LW, LH) => {
+  const w = cv.parentElement; w.style.maxWidth = Math.max(170, Math.min(420, (innerHeight - ((innerWidth > innerHeight && innerHeight < 540) ? 150 : 130)) * LW / LH)) + 'px';
+  const cssW = w.clientWidth || 300, dpr = Math.min(2, window.devicePixelRatio || 1);
+  cv.width = Math.round(cssW * dpr); cv.height = Math.round(cssW * dpr * LH / LW);
+  const cx = cv.getContext('2d'); cx.setTransform(cv.width / LW, 0, 0, cv.width / LW, 0, 0); return { cx };
+};
+const loop = (id, step) => {
+  let raf = 0, prev = 0;
+  const f = ts => { if(!isOn(id)){ raf = 0; return; } const dt = Math.min(.04, (ts - prev) / 1000); prev = ts; step(dt); raf = requestAnimationFrame(f); };
+  const start = () => { if(!raf){ prev = performance.now(); raf = requestAnimationFrame(f); } };
+  document.addEventListener('visibilitychange', () => { if(!document.hidden && isOn(id)) start(); });
+  return { start, stop(){ cancelAnimationFrame(raf); raf = 0; } };
+};
+register({ id: 'sudoku', name: 'Sudoku', icon: TAB_IC.sudoku, mount: el => Sdk.mount(el) });
+register({ id: 'mine', name: 'Dò mìn', icon: TAB_IC.mine, mount: el => Mine.mount(el) });
+register({ id: 'chess', name: 'Cờ vua', icon: TAB_IC.chess, mount: el => Chess.mount(el) });
+window.addEventListener('resize', () => { const d = REG[cur]; if(d && d.show && pane[cur]) d.show(); });
+window.SPXGames = { mount, register, isOn, setActive(v){ active = v; const d = REG[cur]; if(d){ if(v && d.show) d.show(); else if(!v && d.hide) d.hide(); } },
+  u: { $, $$, pad, fmt, rnd, shuffle, best, IC, fit, loop }, _chess: Chess._t };
 })();
