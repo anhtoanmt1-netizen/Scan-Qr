@@ -31,12 +31,12 @@ const CSS = `
 .kw{background:linear-gradient(135deg,#1c4f87,#073763);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
 .kf{background:#e8f0f8}[data-theme="dark"] .kf{background:#16365a}
 .kg{background:#e8f0f8;position:relative}[data-theme="dark"] .kg{background:#16365a}
-.kg::after{content:"";position:absolute;inset:33%;border-radius:50%;border:3px solid var(--brand);background:rgba(238,78,44,.25)}
+.kg::after{content:"";position:absolute;inset:33%;border-radius:50%;border:3px solid var(--brand);background:rgba(var(--brand-rgb),.25)}
 .ksp{position:absolute;left:0;top:0;transition:transform .13s ease;pointer-events:none}
 .ksp svg{width:100%;height:100%;display:block}
 .ksp.box.on svg{filter:drop-shadow(0 0 5px #ffd166) brightness(1.1)}
 .kpad{display:grid;grid-template-columns:repeat(3,46px);grid-template-rows:repeat(2,46px);gap:6px;justify-content:center;margin-top:9px}
-.kpad button{border-radius:12px;background:rgba(7,55,99,.1);color:var(--navy);font-size:18px;font-weight:800}
+.kpad button{border-radius:12px;background:rgba(var(--navy-rgb),.1);color:var(--navy);font-size:18px;font-weight:800}
 [data-theme="dark"] .kpad button{background:rgba(255,255,255,.12);color:#fff}
 .kpad button:active{transform:scale(.9);background:var(--brand);color:#fff}
 .klv{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:10px}
@@ -48,7 +48,7 @@ const CSS = `
 /* Nuôi thú */
 .ps{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:1/.8;background:linear-gradient(180deg,#cfe1f3 0 62%,#f6d9cc 62%);max-width:var(--bs,420px);margin:0 auto;user-select:none;-webkit-user-select:none}
 [data-theme="dark"] .ps{background:linear-gradient(180deg,#14375d 0 62%,#3a2a3a 62%)}
-.ps::before{content:"";position:absolute;left:0;right:0;top:62%;height:5px;background:rgba(7,55,99,.18)}
+.ps::before{content:"";position:absolute;left:0;right:0;top:62%;height:5px;background:rgba(var(--navy-rgb),.18)}
 .pwin{position:absolute;right:9%;top:9%;width:20%;aspect-ratio:1;border-radius:10px;background:linear-gradient(135deg,#fff,#8cc0ef);border:4px solid var(--navy);box-shadow:inset 0 0 0 3px rgba(255,255,255,.4)}
 .pwin::before,.pwin::after{content:"";position:absolute;background:var(--navy)}.pwin::before{left:50%;top:0;bottom:0;width:3px}.pwin::after{top:50%;left:0;right:0;height:3px}
 .pet{position:absolute;left:50%;top:36%;width:56%;transform:translateX(-50%);cursor:pointer;animation:pbob 2.4s ease-in-out infinite;transform-origin:50% 100%}
@@ -74,7 +74,7 @@ const CSS = `
 @keyframes pfall{to{transform:translateY(340px)}}
 .pchoose{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:10px 0}
 .pchoose button{padding:10px 4px;border-radius:14px;background:var(--input);border:2px solid var(--line);font-weight:700;font-size:12px;color:var(--text)}
-.pchoose button.on{border-color:var(--brand);background:rgba(238,78,44,.1)}
+.pchoose button.on{border-color:var(--brand);background:rgba(var(--brand-rgb),.1)}
 .pchoose svg{width:70px;height:70px;display:block;margin:0 auto 4px}
 .pnm{width:100%}
 `;
@@ -109,7 +109,8 @@ const Gold = (() => {
   }
   function update(dt){
     if(state !== 'over'){
-      time -= dt; if(time <= 0){ time = 0; return levelEnd(); }
+      time -= dt; if(time <= 0){ time = 0; $('#gdT', root).textContent = 0; return levelEnd(); }
+      const tt = Math.ceil(time); if(tt !== update.lt){ update.lt = tt; $('#gdT', root).textContent = tt; }
       if(state === 'swing'){ ang += dir * dt * 1.5; if(ang > 1.2){ ang = 1.2; dir = -1; } if(ang < -1.2){ ang = -1.2; dir = 1; } }
       const hx = OX + Math.sin(ang) * len, hy = OY + Math.cos(ang) * len;
       if(state === 'shoot'){

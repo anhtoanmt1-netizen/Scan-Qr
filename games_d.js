@@ -36,10 +36,10 @@ const CSS = `
 .jbar{height:9px;border-radius:9px;background:var(--line);overflow:hidden;margin-top:8px}
 .jbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),#ffd166);transition:width .3s}
 /* Domino */
-.dt{display:inline-flex;background:#fffdf7;border:1.5px solid var(--navy);border-radius:7px;box-shadow:0 2px 0 rgba(7,55,99,.35);position:relative;flex:none}
+.dt{display:inline-flex;background:#fffdf7;border:1.5px solid var(--navy);border-radius:7px;box-shadow:0 2px 0 rgba(var(--navy-rgb),.35);position:relative;flex:none}
 .dt.h{flex-direction:row;width:44px;height:23px}.dt.v{flex-direction:column;width:23px;height:44px}
 .dt.hand{width:30px;height:58px;flex-direction:column;cursor:pointer;transition:transform .15s}
-.dt.hand.ok{box-shadow:0 0 0 2px var(--brand),0 3px 8px rgba(238,78,44,.5);transform:translateY(-4px)}
+.dt.hand.ok{box-shadow:0 0 0 2px var(--brand),0 3px 8px rgba(var(--brand-rgb),.5);transform:translateY(-4px)}
 .dt.hand.dim{opacity:.55}
 .dt.hand.hint{animation:jsel .4s ease-in-out infinite alternate}
 .dt.hand.chosen{transform:translateY(-8px);box-shadow:0 0 0 3px #ffd166}
