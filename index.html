@@ -226,12 +226,12 @@ input:disabled{cursor:not-allowed}
 .ov{position:fixed;inset:0;z-index:50;background:rgba(3,15,28,.78);display:none;align-items:center;justify-content:center;padding:14px;backdrop-filter:blur(4px)}
 .ov.show{display:flex;animation:fade .2s}
 @keyframes fade{from{opacity:0}to{opacity:1}}
-.modal{background:var(--card);color:var(--text);width:100%;max-width:400px;border-radius:20px;padding:14px;box-shadow:0 20px 50px rgba(0,0,0,.5);max-height:94vh;overflow:auto}
+.modal{background:var(--card);color:var(--text);width:100%;max-width:400px;border-radius:20px;padding:14px;box-shadow:0 20px 50px rgba(0,0,0,.5);max-height:calc(var(--vh,1vh)*94);overflow:auto}
 .modal h3{margin:0 0 10px;font-size:16px;font-weight:800;display:flex;align-items:center;gap:7px}
 .modal h3 svg{color:var(--brand);width:19px;height:19px}
 .modal p{color:var(--muted);font-size:12.5px;margin:7px 0;word-break:break-all;font-weight:500;line-height:1.5}
 .modal .btn{width:100%;margin-top:8px}
-.rdw{position:relative;border-radius:16px;overflow:hidden;background:#000;display:flex;flex-direction:column;justify-content:center;max-height:min(300px,38vh)}
+.rdw{position:relative;border-radius:16px;overflow:hidden;background:#000;display:flex;flex-direction:column;justify-content:center;max-height:min(300px,calc(var(--vh,1vh)*38))}
 #reader{width:100%;flex:none}
 .vf{position:absolute;left:50%;top:50%;width:88%;height:62%;transform:translate(-50%,-50%);pointer-events:none}
 #scanOv .modal{padding:12px}
@@ -309,39 +309,53 @@ body.gamemode{padding-bottom:36px}
 @keyframes rotp{0%,100%{transform:rotate(-90deg)}50%{transform:rotate(0)}}
 [hidden]{display:none!important}
 
-/* Xoay ngang màn hình */
-@media (orientation:landscape) and (max-height:540px){
-  body{padding-bottom:calc(66px + env(safe-area-inset-bottom))}
-  body.norot #rotHint{display:flex}
-  header{padding:calc(5px + env(safe-area-inset-top)) 14px 6px;border-radius:0 0 14px 14px}
-  .hrow,.bar div{max-width:960px}
-  .brand{font-size:15px}.clock{font-size:9px}
-  main{max-width:960px;margin-top:6px}
-  .car{padding:3px 8% 8px}
-  .row,.addslide{flex-basis:84%}
-  .row{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto auto auto 1fr;column-gap:14px;align-content:start}
-  .row>.rh{grid-column:1/-1}.row>label.l,.row>.fl,.row>.msg{grid-column:1}
-  .row>.gate{grid-column:2;grid-row:2/6}
-  .stats .sl span{white-space:nowrap}
-  #topPad{display:flex;gap:12px;align-items:center}
-  #topPad .card{flex:1.7;margin:0}#topPad .stats{flex:1;margin:0}
-  .tg{grid-template-columns:1.5fr 1fr}
-  .bar{padding:6px 14px calc(6px + env(safe-area-inset-bottom))}
-  .btn{height:40px}
-  .fab{bottom:calc(54px + env(safe-area-inset-bottom));height:44px}
-  .modal{max-width:560px;max-height:94vh}
-  .hsheet{max-width:680px;height:94%}
-  #scanOv .modal{max-width:780px;display:grid;grid-template-columns:1.3fr 1fr;grid-template-areas:"h h" "v t" "v p" "v i" "v l" "v b";column-gap:14px;align-content:start}
-  #scanOv .modal h3{grid-area:h}#scanOv .rdw{grid-area:v;max-height:calc(100vh - 110px)}#scanOv .sc-tools{grid-area:t}
-  #scanOv .sc-tip{grid-area:p}#scanOv .sc-info{grid-area:i}#scanOv .sc-last{grid-area:l}#scanOv #scClose{grid-area:b;align-self:end}
-  .toast{top:calc(46px + env(safe-area-inset-top))}
-}
+/* Bố cục ngang: html.ls (xoay thật hoặc app tự xoay) */
+html.ls body{padding-bottom:calc(66px + env(safe-area-inset-bottom))}
+html.rh #rotHint{display:flex}
+html.ls header{padding:calc(5px + env(safe-area-inset-top)) 14px 6px;border-radius:0 0 14px 14px}
+html.ls .hrow,html.ls .bar div{max-width:960px}
+html.ls .brand{font-size:15px}
+html.ls .clock{font-size:9px}
+html.ls main{max-width:960px;margin-top:6px}
+html.ls .car{padding:3px 8% 8px}
+html.ls .row,html.ls .addslide{flex-basis:84%}
+html.ls .row{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto auto auto 1fr;column-gap:14px;align-content:start}
+html.ls .row>.rh{grid-column:1/-1}
+html.ls .row>label.l,html.ls .row>.fl,html.ls .row>.msg{grid-column:1}
+html.ls .row>.gate{grid-column:2;grid-row:2/6}
+html.ls .stats .sl span{white-space:nowrap}
+html.ls #topPad{display:flex;gap:12px;align-items:center}
+html.ls #topPad .card{flex:1.7;margin:0}
+html.ls #topPad .stats{flex:1;margin:0}
+html.ls .tg{grid-template-columns:1.5fr 1fr}
+html.ls .bar{padding:6px 14px calc(6px + env(safe-area-inset-bottom))}
+html.ls .btn{height:40px}
+html.ls .fab{bottom:calc(54px + env(safe-area-inset-bottom));height:44px}
+html.ls .modal{max-width:560px;max-height:calc(var(--vh,1vh)*94)}
+html.ls .hsheet{max-width:680px;height:94%}
+html.ls #scanOv .modal{max-width:780px;display:grid;grid-template-columns:1.3fr 1fr;grid-template-areas:"h h" "v t" "v p" "v i" "v l" "v b";column-gap:14px;align-content:start}
+html.ls #scanOv .modal h3{grid-area:h}
+html.ls #scanOv .rdw{grid-area:v;max-height:calc(calc(var(--vh,1vh)*100) - 110px)}
+html.ls #scanOv .sc-tools{grid-area:t}
+html.ls #scanOv .sc-tip{grid-area:p}
+html.ls #scanOv .sc-info{grid-area:i}
+html.ls #scanOv .sc-last{grid-area:l}
+html.ls #scanOv #scClose{grid-area:b;align-self:end}
+html.ls .toast{top:calc(46px + env(safe-area-inset-top))}
+/* Ép màn hình ngang (html.fl): xoay cả app 90° khi máy không khóa được hướng */
+html.fl,html.fl body{height:100%;overflow:hidden;margin:0}
+html.fl body{padding:0}
+html.fl #app{position:fixed;left:0;top:0;width:var(--H,100vh);height:var(--W,100vw);transform-origin:0 0;transform:translateX(var(--W,100vw)) rotate(90deg);overflow:hidden;background:var(--bg)}
+html.fl #scr{position:absolute;left:0;top:0;right:0;bottom:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:66px}
+html.fl body.gamemode #scr{padding-bottom:36px}
+.seg.s3{grid-template-columns:repeat(3,1fr)}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 </style>
 </head>
 <body>
+<div id="app"><div id="scr">
 
 <header>
   <div class="hrow">
@@ -404,6 +418,7 @@ body.gamemode{padding-bottom:36px}
   </div>
   <div id="gameRoot" hidden></div>
 </main>
+</div>
 
 <div class="bar"><div>
   <button class="btn b1" id="btnAdd"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Thêm hàng</button>
@@ -508,7 +523,8 @@ body.gamemode{padding-bottom:36px}
       <input type="range" id="vol" min="0" max="100" step="5" aria-label="Âm lượng"></div>
     <div class="sg"><label class="l"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Nhập liệu &amp; màn hình</label>
       <label class="sr"><span>Tự nhảy sang hàng mới khi nhập đủ</span><span class="sw"><input type="checkbox" id="optAuto"><span></span></span></label>
-      <label class="sr"><span>Cho phép xoay ngang màn hình</span><span class="sw"><input type="checkbox" id="optRot"><span></span></span></label></div>
+      <div class="l" style="margin:10px 0 6px 2px;display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase">Hướng màn hình</div>
+      <div class="seg s3" id="segOri"><button type="button" data-v="auto">Tự động</button><button type="button" data-v="port">Dọc</button><button type="button" data-v="land">Ngang</button></div></div>
     <div class="sg"><label class="l"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>Giao diện</label>
       <label class="sr"><span>Giao diện đổi Sort code (mặc định)</span><span class="sw"><input type="checkbox" class="mdo" value="sort"><span></span></span></label>
       <label class="sr"><span>Giao diện trò chơi</span><span class="sw"><input type="checkbox" class="mdo" value="game"><span></span></span></label></div>
@@ -530,6 +546,7 @@ body.gamemode{padding-bottom:36px}
 
 <div class="toast" id="toast"></div>
 
+</div>
 <script src="config.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -549,7 +566,8 @@ const store = {
 
 /* ---------- Cài đặt · đa ngôn ngữ ---------- */
 const $$ = q => [...document.querySelectorAll(q)];
-const S = Object.assign({ lang:'vi', fab:'left', sound:1, vol:80, mode:'sort', auto:true, rot:true }, store.get('spx_settings', {}));
+const S = Object.assign({ lang:'vi', fab:'left', sound:1, vol:80, mode:'sort', auto:true, orient:'auto' }, store.get('spx_settings', {}));
+if(S.rot === false && !(store.get('spx_settings', {}).orient)) S.orient = 'port';
 const saveS = () => store.set('spx_settings', S);
 const EN = {
 "Cài app: bấm nút": "Install: tap",
@@ -664,6 +682,7 @@ const EN = {
 "Đã chuyển về giao diện Sort code": "Switched to Sort code interface"
 };
 Object.assign(EN, {"Copy": "Copy", "Tự nhảy sang hàng mới khi nhập đủ": "Auto-jump to a new row when complete", "Cho phép xoay ngang màn hình": "Allow landscape rotation", "Nhập liệu & màn hình": "Entry & screen", "Xoay điện thoại về chiều dọc": "Rotate your phone back to portrait", "Áp dụng ngay": "Apply now", "Có DATA mới từ hệ thống": "New DATA from the system", "Đã đồng bộ DATA mới cho toàn hệ thống": "New DATA synced to the whole system", "DATA mới chỉ áp dụng trên máy này": "New DATA applies to this device only", "Hệ thống": "System", "Đồng bộ toàn hệ thống: BẬT – DATA mới sẽ áp dụng cho mọi người dùng": "System-wide sync: ON – new DATA applies to all users", "Đồng bộ toàn hệ thống: CHƯA BẬT (xem config.js) – DATA chỉ áp dụng trên máy này": "System-wide sync: OFF (see config.js) – DATA applies to this device only", "Không kết nối được máy chủ đồng bộ": "Cannot reach the sync server", "Máy chủ từ chối ghi DATA (kiểm tra Rules)": "The server rejected the write (check the Rules)", "Xóa mã": "Clear code", "DATA gốc": "Original DATA", "Xóa Ward": "Clear Ward"});
+Object.assign(EN, {"Hướng màn hình": "Screen orientation", "Tự động": "Auto", "Dọc": "Portrait", "Ngang": "Landscape", "Đã chuyển sang màn hình ngang": "Switched to landscape", "Đã chuyển sang màn hình dọc": "Switched to portrait", "Đã chuyển về chế độ tự động xoay": "Back to auto-rotate"});
 const EN_RE = [
   [/^Đã sao chép (\d+) mã SPX$/, (m, a) => 'Copied ' + a + ' SPX codes'],
   [/^(.+) · (\d+) dòng$/, (m, a, b) => a + ' · ' + b + ' rows'],
@@ -713,8 +732,18 @@ new MutationObserver(ms => { for(const m of ms){ if(m.type === 'characterData') 
   .observe(document.body, { childList:true, subtree:true, characterData:true });
 const _cf = window.confirm.bind(window); window.confirm = m => _cf(tr(m));
 const _pr = window.prompt.bind(window); window.prompt = (m, d) => _pr(tr(m), d);
+const isFL = () => document.documentElement.classList.contains('fl');
+function local(e, el){                                 // tọa độ con trỏ trong hệ tọa độ của phần tử (kể cả khi app tự xoay)
+  const r = el.getBoundingClientRect();
+  return isFL() ? { x: e.clientY - r.top, y: r.right - e.clientX, w: r.height, h: r.width } : { x: e.clientX - r.left, y: e.clientY - r.top, w: r.width, h: r.height };
+}
+const vec = (dx, dy) => isFL() ? { dx: dy, dy: -dx } : { dx, dy };
+function appRect(el){
+  const r = el.getBoundingClientRect(); if(!isFL()) return r;
+  return { left: r.top, top: innerWidth - r.right, width: r.height, height: r.width, right: r.bottom, bottom: innerWidth - r.left };
+}
 function applyLang(){ document.documentElement.lang = S.lang; trTree(document.body); tick(); }
-window.SPX = { store, S, tr, toast: (...a) => toast(...a), beep: (...a) => beep(...a), tone: (f, t, d, type, pk) => { if(S.sound === 4 || S.vol <= 0) return; try{ unlockAudio(); tone(f, t, d, type, pk); }catch(e){} }, extend(d, r){ Object.assign(EN, d); (r || []).forEach(x => EN_RE.push(x)); } };
+window.SPX = { store, S, tr, local, vec, vh: () => isFL() ? innerWidth : innerHeight, forced: () => isFL(), toast: (...a) => toast(...a), beep: (...a) => beep(...a), tone: (f, t, d, type, pk) => { if(S.sound === 4 || S.vol <= 0) return; try{ unlockAudio(); tone(f, t, d, type, pk); }catch(e){} }, extend(d, r){ Object.assign(EN, d); (r || []).forEach(x => EN_RE.push(x)); } };
 
 /* ---------- Âm thanh ---------- */
 let actx;
@@ -913,8 +942,8 @@ function showSug(r, input, apply){
     o.onclick = () => { input.value = r.ward = d.w; apply(); hideSug(); };
     sug.appendChild(o);
   });
-  const rect = input.getBoundingClientRect(), vv = window.visualViewport;
-  const vh = vv ? vv.height + vv.offsetTop : innerHeight;
+  const rect = appRect(input), vv = window.visualViewport;
+  const vh = isFL() ? innerWidth : (vv ? vv.height + vv.offsetTop : innerHeight);
   const below = vh - rect.bottom - 8, above = rect.top - 80;
   sug.style.display = 'block';
   sug.style.left = rect.left + 'px'; sug.style.width = rect.width + 'px'; sug.style.bottom = 'auto';
@@ -922,6 +951,7 @@ function showSug(r, input, apply){
   else { const h = Math.min(230, above); sug.style.maxHeight = h + 'px'; sug.style.top = (rect.top - 4 - Math.min(h, sug.scrollHeight)) + 'px'; }
 }
 addEventListener('scroll', hideSug, { passive: true });
+$('#scr').addEventListener('scroll', hideSug, { passive: true });
 addEventListener('resize', hideSug);
 
 /* ---------- Hàng nhập ---------- */
@@ -1096,7 +1126,7 @@ function renderHubTree(){
   $('#hubSub').textContent = `${pn} · ${nh} Hub · ${nw} Ward`;
 }
 function fitHub(){                          // tránh bàn phím che nội dung
-  const vv = window.visualViewport; if(!vv) return;
+  const vv = window.visualViewport; if(!vv || isFL()){ hubOv.style.bottom = '0px'; return; }
   hubOv.style.bottom = Math.max(0, innerHeight - vv.height - vv.offsetTop) + 'px';
 }
 function openHubSheet(ctx){
@@ -1165,7 +1195,7 @@ $('#tZoom').onclick = async () => {
 $('#rdw').addEventListener('click', async e => {   // chạm để lấy nét lại
   const t = vidTrack(); if(!t) return;
   const box = $('#rdw'), r = box.getBoundingClientRect(), ring = document.createElement('i');
-  ring.className = 'fring'; ring.style.left = (e.clientX - r.left) + 'px'; ring.style.top = (e.clientY - r.top) + 'px';
+  ring.className = 'fring'; const lp = local(e, box); ring.style.left = lp.x + 'px'; ring.style.top = lp.y + 'px';
   box.appendChild(ring); setTimeout(() => ring.remove(), 650);
   const fm = (t.getCapabilities && t.getCapabilities().focusMode) || [];
   if(fm.includes('single-shot')){
@@ -1524,10 +1554,27 @@ $('#rsYes').onclick = () => { resetAll(); $('#rsOv').classList.remove('show'); b
 
 /* ---------- Cài đặt: giao diện, nút nổi, âm thanh ---------- */
 const stOv = $('#stOv');
-function applyRot(){                                   // cho phép / khóa xoay ngang
-  document.body.classList.toggle('norot', !S.rot);
-  try{ if(screen.orientation){ if(S.rot){ if(screen.orientation.unlock) screen.orientation.unlock(); } else if(screen.orientation.lock) screen.orientation.lock('portrait').catch(() => {}); } }catch(e){}
+const portraitNow = () => (screen.orientation && screen.orientation.type) ? screen.orientation.type.indexOf('portrait') === 0 : innerHeight >= innerWidth;
+function updateLS(){                                   // cập nhật các lớp bố cục: fl (app tự xoay), ls (bố cục ngang), rh (nhắc xoay dọc)
+  const root = document.documentElement, port = portraitNow(), fl = S.orient === 'land' && port, nat = !port && innerHeight < 540;
+  root.classList.toggle('fl', fl); root.classList.toggle('ls', fl || nat); root.classList.toggle('rh', S.orient === 'port' && nat);
+  root.style.setProperty('--W', innerWidth + 'px'); root.style.setProperty('--H', innerHeight + 'px'); root.style.setProperty('--vh', (fl ? innerWidth : innerHeight) / 100 + 'px');
 }
+async function applyOrient(gesture){                   // Tự động / Dọc / Ngang
+  try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
+  if(S.orient !== 'auto' && screen.orientation && screen.orientation.lock){
+    const want = S.orient === 'land' ? 'landscape' : 'portrait';
+    try{ await screen.orientation.lock(want); }
+    catch(e){
+      if(gesture && !document.fullscreenElement && !matchMedia('(display-mode: standalone)').matches && document.documentElement.requestFullscreen){
+        try{ await document.documentElement.requestFullscreen({ navigationUI:'hide' }); await screen.orientation.lock(want); }catch(e2){}
+      }
+    }
+  }
+  updateLS(); setTimeout(updateLS, 350);
+}
+addEventListener('resize', updateLS);
+addEventListener('orientationchange', () => setTimeout(updateLS, 250));
 function applyFab(){ $('#fab').classList.toggle('right', S.fab === 'right'); }
 function whenGames(cb){ if(window.SPXGames) cb(); else addEventListener('load', cb, { once:true }); }
 function applyMode(){
@@ -1543,7 +1590,7 @@ function syncSet(){
   $$('.snd').forEach(i => i.checked = +i.value === S.sound);
   $$('.mdo').forEach(i => i.checked = i.value === S.mode);
   $('#vol').value = S.vol; $('#volTxt').textContent = S.vol + '%';
-  $('#optAuto').checked = S.auto; $('#optRot').checked = S.rot;
+  $('#optAuto').checked = S.auto; $$('#segOri button').forEach(b => b.classList.toggle('on', b.dataset.v === S.orient));
 }
 $('#btnSet').onclick = () => { syncSet(); stOv.classList.add('show'); };
 $('#stClose').onclick = () => stOv.classList.remove('show');
@@ -1555,7 +1602,8 @@ $$('.snd').forEach(i => i.onchange = () => {
   S.sound = +i.value; saveS(); syncSet(); if(S.sound !== 4) beep(true, S.sound);
 });
 $('#optAuto').onchange = e => { S.auto = e.target.checked; saveS(); };
-$('#optRot').onchange = e => { S.rot = e.target.checked; saveS(); applyRot(); };
+$$('#segOri button').forEach(b => b.onclick = () => { S.orient = b.dataset.v; saveS(); syncSet(); applyOrient(true);
+  toast(S.orient === 'land' ? 'Đã chuyển sang màn hình ngang' : S.orient === 'port' ? 'Đã chuyển sang màn hình dọc' : 'Đã chuyển về chế độ tự động xoay', 'ok'); });
 $('#vol').oninput = e => { S.vol = +e.target.value; $('#volTxt').textContent = S.vol + '%'; saveS(); };
 $('#vol').onchange = () => beep(true, S.sound === 4 ? 1 : S.sound);
 $$('.mdo').forEach(i => i.onchange = () => {
@@ -1566,12 +1614,14 @@ $$('.mdo').forEach(i => i.onchange = () => {
 });
 
 /* ---------- Khởi động ---------- */
-loadData().then(() => { rows.forEach(resolve); resolve(batch); renderAll(); syncCont(); renderHistory(); applyFab(); applyRot(); applyLang(); applyMode(); syncSet(); syncCheck(); });
+loadData().then(() => { rows.forEach(resolve); resolve(batch); renderAll(); syncCont(); renderHistory(); applyFab(); updateLS(); applyOrient(false); applyLang(); applyMode(); syncSet(); syncCheck(); });
 if('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 })();
 </script>
 <script src="games.js"></script>
 <script src="games_b.js"></script>
 <script src="games_c.js"></script>
+<script src="games_d.js"></script>
+<script src="games_e.js"></script>
 </body>
 </html>

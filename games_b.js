@@ -84,7 +84,7 @@ const G2048 = (() => {
       <div class="gR"><div class="gcard"><div class="gtip" style="margin:0">Vuốt để di chuyển các ô</div></div></div></div>`;
     const b = $('#tvB', root); let sx, sy;
     b.addEventListener('pointerdown', e => { sx = e.clientX; sy = e.clientY; });
-    b.addEventListener('pointerup', e => { if(sx == null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null; if(Math.max(Math.abs(dx), Math.abs(dy)) < 22) return; move(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0)); });
+    b.addEventListener('pointerup', e => { if(sx == null) return; const v = X.vec(e.clientX - sx, e.clientY - sy), dx = v.dx, dy = v.dy; sx = null; if(Math.max(Math.abs(dx), Math.abs(dy)) < 22) return; move(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0)); });
     b.addEventListener('pointercancel', () => sx = null);
     addEventListener('keydown', e => { if(!G.isOn('g2048')) return; const k = { ArrowUp:0, ArrowRight:1, ArrowDown:2, ArrowLeft:3 }[e.key]; if(k !== undefined){ e.preventDefault(); move(k); } });
     $('#tvNew', root).onclick = newGame; $('#tvUndo', root).onclick = undo;

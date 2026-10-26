@@ -1,5 +1,5 @@
-const V = 'spx-scan-v8';
-const SHELL = ['./', 'index.html', 'manifest.json', 'config.js', 'data.json', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'games.js', 'games_b.js', 'games_c.js'];
+const V = 'spx-scan-v9';
+const SHELL = ['./', 'index.html', 'manifest.json', 'config.js', 'data.json', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'games.js', 'games_b.js', 'games_c.js', 'games_d.js', 'games_e.js'];
 const EXTRA = [
   'https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',

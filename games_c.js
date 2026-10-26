@@ -97,7 +97,7 @@ const Snake = (() => {
     cv = $('#snC', root); const w = $('.cvw', root);
     let ox = 0, oy = 0, down = false;
     w.addEventListener('pointerdown', e => { down = true; ox = e.clientX; oy = e.clientY; });
-    w.addEventListener('pointermove', e => { if(!down) return; const dx = e.clientX - ox, dy = e.clientY - oy; if(Math.max(Math.abs(dx), Math.abs(dy)) < 20) return;
+    w.addEventListener('pointermove', e => { if(!down) return; const v = X.vec(e.clientX - ox, e.clientY - oy), dx = v.dx, dy = v.dy; if(Math.max(Math.abs(dx), Math.abs(dy)) < 20) return;
       setDir(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0)); ox = e.clientX; oy = e.clientY; });
     ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => w.addEventListener(ev, () => down = false));
     addEventListener('keydown', e => { if(!G.isOn('snake')) return; const d = { ArrowUp:0, w:0, ArrowRight:1, d:1, ArrowDown:2, s:2, ArrowLeft:3, a:3 }[e.key]; if(d !== undefined){ e.preventDefault(); setDir(d); } else if(e.key === ' ') pause(); });
@@ -155,7 +155,7 @@ const Brick = (() => {
     b.hp--; X.tone(300 + (b.max - b.hp) * 120 + rnd(60), 0, .04, 'square', .1);
     if(b.hp <= 0){
       score += 10 * level; boom(b); bricks.splice(bricks.indexOf(b), 1);
-      if(Math.random() < .36){ const r = Math.random(); drops.push({ x: b.x + b.w / 2, y: b.y, t: r < .5 ? '+1' : r < .85 ? 'x2' : 'x3' }); }
+      if(Math.random() < .22){ const r = Math.random(); drops.push({ x: b.x + b.w / 2, y: b.y, t: r < .5 ? '+1' : r < .85 ? 'x2' : 'x3' }); }
     }else score += 3 * level;
     info();
   }
@@ -236,7 +236,7 @@ const Brick = (() => {
       <div class="gcols"><div class="gL"><div class="gcard" style="padding:6px"><div class="bw cvw"><canvas class="cv" id="bkC"></canvas><div class="gov" id="bkOv" hidden></div></div></div></div>
       <div class="gR"><div class="gcard"><div class="gtip" style="margin:0">Kéo để di chuyển thanh · chạm để phóng bi</div><div class="gtip">Quà: +1 bi · nhân đôi · nhân ba số bi đang có</div></div></div></div>`;
     cv = $('#bkC', root); const w = $('.cvw', root); let moved = 0, sx = 0, down = false, startPad = 0;
-    const lx = e => (e.clientX - cv.getBoundingClientRect().left) * LW / cv.getBoundingClientRect().width;
+    const lx = e => { const l = X.local(e, cv); return l.x * LW / l.w; };
     w.addEventListener('pointerdown', e => { down = true; sx = lx(e); startPad = pad.x; moved = 0; pad.x = Math.max(0, Math.min(LW - pad.w, lx(e) - pad.w / 2)); });
     w.addEventListener('pointermove', e => { if(!down) return; moved += Math.abs(e.movementX || 0); pad.x = Math.max(0, Math.min(LW - pad.w, lx(e) - pad.w / 2)); });
     w.addEventListener('pointerup', () => { down = false; if(state === 'ready' || (state === 'run' && balls.some(b => b.stuck))) launch(); });

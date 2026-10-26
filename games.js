@@ -700,18 +700,16 @@ const CSS2 = `
 .xlm{fill:rgba(246,238,123,.55);stroke:#e6d84a;stroke-width:1.500}
 .xck{fill:rgba(232,53,46,.35);stroke:#e8352e;stroke-width:2}
 .xht{fill:none;stroke:#2ea8e6;stroke-width:3;stroke-dasharray:5 3}
-/* Xoay ngang */
-@media (orientation:landscape) and (max-height:540px){
-  :root{--bs:max(190px,calc(100vh - 150px))}
-  .gm{max-width:900px}
-  .gtop{margin-bottom:5px}.gback{height:32px}.gtitle{font-size:14px}.gbar{margin-bottom:5px}.gcard{padding:8px}
-  .gcols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}
-  .gR{margin-top:0}
-  .glaunch{grid-template-columns:repeat(5,1fr)}
-  .gt .ic{width:44px;height:44px}
-  .sdw,.mb,.cbw,.bw{margin-left:0}
-}`;
-const ORDER = ['sudoku', 'mine', 'chess', 'xiangqi', 'caro', 'g2048', 'snake', 'brick', 'bird'];
+/* Xoay ngang (html.ls = đang ở bố cục ngang, kể cả khi app tự xoay) */
+html.ls{--bs:max(190px,calc(var(--vh,1vh)*100 - 150px))}
+html.ls .gm{max-width:900px}
+html.ls .gtop{margin-bottom:5px}html.ls .gback{height:32px}html.ls .gtitle{font-size:14px}html.ls .gbar{margin-bottom:5px}html.ls .gcard{padding:8px}
+html.ls .gcols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}
+html.ls .gR{margin-top:0}
+html.ls .glaunch{grid-template-columns:repeat(5,1fr)}
+html.ls .gt .ic{width:44px;height:44px}
+html.ls .sdw,html.ls .mb,html.ls .cbw,html.ls .bw{margin-left:0}`;
+const ORDER = ['sudoku', 'mine', 'chess', 'xiangqi', 'caro', 'g2048', 'jewels', 'domino', 'memory', 'sokoban', 'snake', 'brick', 'gold', 'bird', 'pet'];
 const REG = {}, pane = {};
 let mounted = false, active = false, cur = null, rootEl;
 const isOn = id => active && !document.hidden && cur === id;
@@ -727,7 +725,7 @@ function open(id){
   $$('.gpane', rootEl).forEach(p => p.classList.remove('on'));
   let p = pane[id];
   if(!p){ p = pane[id] = document.createElement('div'); p.className = 'gpane'; $('#gbody', rootEl).appendChild(p); d.mount(p); }
-  p.classList.add('on'); if(d.show) d.show(); window.scrollTo(0, 0);
+  p.classList.add('on'); if(d.show) d.show(); { const sc = document.getElementById('scr'); if(sc) sc.scrollTop = 0; window.scrollTo(0, 0); }
 }
 function back(){
   const d = REG[cur]; if(d && d.hide) d.hide();
@@ -742,7 +740,7 @@ function mount(root){
   setInterval(() => { if(!active || document.hidden) return; if(cur === 'sudoku') Sdk.tick(); else if(cur === 'mine') Mine.tick(); }, 1000);
 }
 const fit = (cv, LW, LH) => {
-  const w = cv.parentElement; w.style.maxWidth = Math.max(170, Math.min(420, (innerHeight - ((innerWidth > innerHeight && innerHeight < 540) ? 150 : 130)) * LW / LH)) + 'px';
+  const w = cv.parentElement; w.style.maxWidth = Math.max(170, Math.min(420, (X.vh() - (document.documentElement.classList.contains('ls') ? 150 : 130)) * LW / LH)) + 'px';
   const cssW = w.clientWidth || 300, dpr = Math.min(2, window.devicePixelRatio || 1);
   cv.width = Math.round(cssW * dpr); cv.height = Math.round(cssW * dpr * LH / LW);
   const cx = cv.getContext('2d'); cx.setTransform(cv.width / LW, 0, 0, cv.width / LW, 0, 0); return { cx };
